@@ -1,11 +1,13 @@
+#WinActivateForce
 #InstallKeybdHook
 #NoEnv
 
-; SuperGlobals 
+; SuperGlobals
 Global bToggle := 1
 Global Toggle0
 Global Toggle1
 Global name
+Global path
 Global title
 Global time
 Global curr_timeSec
@@ -13,6 +15,7 @@ Global end_timeSec
 
 ;####   Triggers    ####
 
+; For testing
 ~^!i::
   return
 
@@ -25,16 +28,18 @@ Global end_timeSec
   Gosub, disableSpeed
   return
 
-; Escape blacklist VMware escape seq is hit (in-progress)
-~^+LAlt::
-~^!LShift::
-~+!LCtrl::
-  msgbox, , , % "Whoa", 1
+~WheelUp::
+~WheelDown::
+  Pause, On, 1
+  Sleep, 2000
+  Pause, Off, 1
   return
 
+; Implement some feature for when song gets deleted
 ~^+a::
   return
-  
+
+; Pause the loop if blacklisted process titles are running in the foreground
 ~^!b::
   bToggle := !bToggle
   if bToggle
@@ -42,7 +47,13 @@ Global end_timeSec
   else
     msgbox, , , % "Blacklist Toggle : Off", 1    
   return
-  
+
+; Escape the blacklist when VMware escape seq is hit (in-progress)
+~^+LAlt::
+~^!LShift::
+~+!LCtrl::
+  return
+
 ~^0::
 ~^Numpad0::
   Toggle0 := !Toggle0
@@ -129,22 +140,9 @@ disableSpeed:
   SetTimer, Speed0, Off
   SetTimer, Speed1, Off
   msgbox, , , % "Speed : Off", 1
-  ;retrurn
   exit
 	
 ; ####   Functions    ####
-
-test() {
-}
-
-testSpeed() {
-; test if speed is enabled
-if (Toggle0 == 1 OR Toggle1 == 1 OR Toggle2 == 1)
-  msgbox, , , % "Speed is On", 2
-else
-  ;Toggle0 := 0; Toggle1 := 0
-  msgbox, , , % "Speed is Off.", 2
-}
 
 WinGetAll(InType = "", In = "", OutType = "") {
   WinGet, wParam, List
@@ -168,19 +166,17 @@ WinGetAll(InType = "", In = "", OutType = "") {
 
 getSongInfo() {
   name := WinGetAll("Proc", "foobar2000.exe", "Name")
-  name_a := StrSplit(name, A_Space)
-  For i in name_a
-    title .= name_a[A_Index] . " "
-  Until A_Index == (name_a.MaxIndex() - 1)
-  time := SubStr(name_a[name_a.MaxIndex()], 2, StrLen(name_a[name_a.MaxIndex()])-2)
+  name_a := StrSplit(name, "` -:- ")
+  title_a := StrSplit(name_a[1], A_Space)
+  time := SubStr(title_a[title_a.MaxIndex()], 2, StrLen(title_a[title_a.MaxIndex()])-2)
   time_a := StrSplit(time, "`/")
   curr_a := StrSplit(time_a[1], "`:")
   end_a := StrSplit(time_a[2], "`:")
   curr_timeSec := (60*curr_a[1]+curr_a[2])
   end_timeSec := (60*end_a[1]+end_a[2])
+  path := name_a[2]
 }
 
-; Pause the loop if any of these process titles are running in the foreground
 checkBlacklist() {
   blacklist := ["vmware", "notepad++"]
   WinGetActiveTitle, currWinTitle
@@ -250,12 +246,11 @@ endSec() {
   return (end_timeSec - curr_timeSec)
 }
 
-; If name has "[Skit, Intro, Outro, Interlude, Acapella]" in it, notify (in-progress)
+; If name has "[Skit, Intro, Outro, Interlude, Acapella]" in it, notify
 isSkitIntro ()
   return 
 
 kbActive() {
-  ; https://autohotkey.com/docs/Variables.htm#TimeIdle
   if (A_TimeIdleKeyboard < 3000)
     return 1
   return 0
