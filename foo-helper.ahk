@@ -1,5 +1,5 @@
 #WinActivateForce
-    #InstallKeybdHook
+#InstallKeybdHook
 #NoEnv
 
 ; SuperGlobals
@@ -184,29 +184,18 @@ disableSpeed:
         WinGetActiveTitle, currWinTitle
         if bToggle {
             for i, v in blacklist {
-                ;/*
                 if (currWinTitle == "vmware") {
-                    ;send {Ctrl Alt Shift}
-                    ;send {Ctrl} {Alt} {Shift}
-                    ;send {Ctrl} {Alt}
-                    ;Send, {Ctrl down}{Alt down}{Shift down}{Ctrl up}{Alt up}{Shift up}
-                    Send {Ctrl down}
-                    Send {Alt down}
-                    Send {Ctrl up} {Alt up}
-                    ;Send ^!+
                     sleep, 2000
                     ; Refresh active title 
-                    WinGetActiveTitle, currWinTitle
+                    WinGetActiveTitle, currWinTitle ; Refresh
                     return
                 }
-                ;*/
                 while inStr(currWinTitle, v, 0) {
                     Pause, On, 1
-                    ;msgbox, , , % "Current window is blacklisted!", 1
                     Sleep, 2000
                     Pause, Off, 1
                     ; Refresh active title
-                    WinGetActiveTitle, currWinTitle
+                    WinGetActiveTitle, currWinTitle ; Refresh
                 }
             }
         }
