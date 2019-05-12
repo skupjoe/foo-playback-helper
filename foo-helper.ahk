@@ -143,108 +143,109 @@ disableSpeed:
     SetTimer, Speed1, Off
     msgbox, , , % "Speed : Off", 1
     exit
-    
-    ; ####   Functions    ####
-    
-    WinGetAll(InType = "", In = "", OutType = "") {
-        WinGet, wParam, List
-        Window := {}
-        loop %wParam% {
-            Counta += 1
-            WinGetTitle, WinName%A_Index%, % "ahk_id " wParam%A_Index%
-            WinGet, Proc%A_index%, ProcessName, % "ahk_id " wParam%A_Index%
-            Window[ Counta , "Name" ]	:= WinName%A_index%
-            Window[ Counta , "Proc" ]	:= Proc%A_Index%
-            if (WinName%A_index% = "") OR (WinName%A_Index% = "Start") OR (WinName%A_Index% = "Program Manager")
-                continue
-            if (InType) AND (In) AND (OutType)
-                if (Window[A_index, InType] = In)
-                return % Window[a_index, OutType]
-        }
+
+; ####   Functions    ####
+
+WinGetAll(InType = "", In = "", OutType = "") {
+    WinGet, wParam, List
+    Window := {}
+    loop %wParam% {
+        Counta += 1
+        WinGetTitle, WinName%A_Index%, % "ahk_id " wParam%A_Index%
+        WinGet, Proc%A_index%, ProcessName, % "ahk_id " wParam%A_Index%
+        Window[ Counta , "Name" ]	:= WinName%A_index%
+        Window[ Counta , "Proc" ]	:= Proc%A_Index%
+        if (WinName%A_index% = "") OR (WinName%A_Index% = "Start") OR (WinName%A_Index% = "Program Manager")
+            continue
         if (InType) AND (In) AND (OutType)
-            return "Error, InType, or in not found."
-        return % Window
+            if (Window[A_index, InType] = In)
+            return % Window[a_index, OutType]
     }
-    
-    getSongInfo() {
-        name := WinGetAll("Proc", "foobar2000.exe", "Name")
-        name_a := StrSplit(name, "` -:- ")
-        title_a := StrSplit(name_a[1], A_Space)
-        time := SubStr(title_a[title_a.MaxIndex()], 2, StrLen(title_a[title_a.MaxIndex()])-2)
-        time_a := StrSplit(time, "`/")
-        curr_a := StrSplit(time_a[1], "`:")
-        end_a := StrSplit(time_a[2], "`:")
-        curr_timeSec := (60*curr_a[1]+curr_a[2])
-        end_timeSec := (60*end_a[1]+end_a[2])
-        path := name_a[2]
-    }
-    
-    checkBlacklist() {
-        blacklist := ["vmware", "notepad++"]
-        WinGetActiveTitle, currWinTitle
-        if bToggle {
-            for i, v in blacklist {
-                if (currWinTitle == "vmware") {
-                    sleep, 2000
-                    ; Refresh active title 
-                    WinGetActiveTitle, currWinTitle ; Refresh
-                    return
-                }
-                while inStr(currWinTitle, v, 0) {
-                    Pause, On, 1
-                    Sleep, 2000
-                    Pause, Off, 1
-                    ; Refresh active title
-                    WinGetActiveTitle, currWinTitle ; Refresh
-                }
+    if (InType) AND (In) AND (OutType)
+        return "Error, InType, or in not found."
+    return % Window
+}
+
+getSongInfo() {
+    name := WinGetAll("Proc", "foobar2000.exe", "Name")
+    name_a := StrSplit(name, "` -:- ")
+    title_a := StrSplit(name_a[1], A_Space)
+    time := SubStr(title_a[title_a.MaxIndex()], 2, StrLen(title_a[title_a.MaxIndex()])-2)
+    time_a := StrSplit(time, "`/")
+    curr_a := StrSplit(time_a[1], "`:")
+    end_a := StrSplit(time_a[2], "`:")
+    curr_timeSec := (60*curr_a[1]+curr_a[2])
+    end_timeSec := (60*end_a[1]+end_a[2])
+    path := name_a[2]
+}
+
+checkBlacklist() {
+    blacklist := ["vmware", "notepad++"]
+    WinGetActiveTitle, currWinTitle
+    if bToggle {
+        for i, v in blacklist {
+            if (currWinTitle == "vmware") {
+                sleep, 2000
+                ; Refresh active title 
+                WinGetActiveTitle, currWinTitle ; Refresh
+                return
+            }
+            while inStr(currWinTitle, v, 0) {
+                Pause, On, 1
+                Sleep, 2000
+                Pause, Off, 1
+                ; Refresh active title
+                WinGetActiveTitle, currWinTitle ; Refresh
             }
         }
-        return
     }
-    
-    isPlaying() {
-        ctr := 0
+    return
+}
+
+isPlaying() {
+    ctr := 0
+    getSongInfo()
+    while (name == "foobar2000") AND !kbActive() {
+        ctr++
         getSongInfo()
-        while (name == "foobar2000") AND !kbActive() {
-            ctr++
-            getSongInfo()
-            Sleep, 5500
-            if (ctr not in 1,2)
-                msgbox, , , % "Foobar2000 is not playing!", 1
-            if (ctr == 5) {
-                msgbox, , , % "Foobar2000 is still not playing. Exiting!", 2
-                Gosub disableSpeed
-                return 0
-            }
+        Sleep, 5500
+        if (ctr not in 1,2)
+            msgbox, , , % "Foobar2000 is not playing!", 1
+        if (ctr == 5) {
+            msgbox, , , % "Foobar2000 is still not playing. Exiting!", 2
+            Gosub disableSpeed
+            return 0
         }
-        return 1
     }
-    
-    endSec() {
-        ctr := 0
+    return 1
+}
+
+endSec() {
+    ctr := 0
+    getSongInfo()
+    while (end_timeSec == "" OR curr_timeSec == "") AND !kbActive() {
+        ctr++
         getSongInfo()
-        while (end_timeSec == "" OR curr_timeSec == "") AND !kbActive() {
-            ctr++
-            getSongInfo()
-            msgbox, , , % "Cannot get time!", 1
-            Sleep, 5500
-            if (ctr == 5) {
-                msgbox, , , % "Time has remained empty. Exiting!", 2
-                Gosub disableSpeed
-                return 0
-            }
+        msgbox, , , % "Cannot get time!", 1
+        Sleep, 5500
+        if (ctr == 5) {
+            msgbox, , , % "Time has remained empty. Exiting!", 2
+            Gosub disableSpeed
+            return 0
         }
-        return (end_timeSec - curr_timeSec)
     }
-    
-    ; If name has "[Skit, Intro, Outro, Interlude, Acapella]" in it, notify
-    isSkitIntro ()
-return 
+    return (end_timeSec - curr_timeSec)
+}
 
 kbActive() {
     if (A_TimeIdleKeyboard < 3000)
         return 1
-return 0
+    return 0
 }
+
+; If name has "[Skit, Intro, Outro, Interlude, Acapella]" deliver notification
+; (In progress)
+isSkitIntro ()
+    return 
 
 F9::Reload
