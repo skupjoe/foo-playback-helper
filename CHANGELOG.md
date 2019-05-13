@@ -5,6 +5,10 @@
 - Move Album:
   - New GUI window support for moving albums to second temp directory genre folder with AHK hotkey.
 
+## [1.1.1] - 2019-05-13
+### Changed
+- Standardized naming & case conventions.
+  
 ## [1.1.0] - 2019-05-13
 ### Fixed
 - Scroll detection:
@@ -18,5 +22,6 @@
 - First version commit.
 
 [Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v1.1.0...HEAD
+[1.1.1]: https://github.com/skupjoe/foo-playback-helper/compare/v1.0.0...v1.1.1
 [1.1.0]: https://github.com/skupjoe/foo-playback-helper/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/skupjoe/foo-playback-helper/compare/a2bfe1c...v1.0.0

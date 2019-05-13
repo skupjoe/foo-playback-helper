@@ -2,7 +2,7 @@
 #InstallKeybdHook
 #NoEnv
 
-Global bToggle := 1
+Global B_Toggle := 1
 Global Toggle0
 Global Toggle1
 Global Toggle2
@@ -25,7 +25,7 @@ return
 ~^Space::
 ~Media_Stop::
 ~Media_Play_Pause::
-Gosub, disableSpeed
+Gosub, DisableSpeed
 return
 
 ; Scroll pause
@@ -41,8 +41,8 @@ return
 
 ; Pause the loop for blacklisted titles
 ~^!b::
-bToggle := !bToggle
-if bToggle
+B_Toggle := !B_Toggle
+if B_Toggle
     msgbox, , , % "Blacklist Toggle : On", 1
 else
     msgbox, , , % "Blacklist Toggle : Off", 1
@@ -114,7 +114,7 @@ return
 Speed0:
 CheckBlacklist()
 if Toggle0
-    AND isPlaying() AND !(EndSec() < 55)
+    AND isPlaying() AND !(endSec() < 55)
     AND !kbActive() AND !scrollActive() {
     Send, {Ctrl down}{Shift down}{Right}{Ctrl up}{Shift up}
     Sleep, 10000
@@ -124,7 +124,7 @@ return
 Speed1:
 CheckBlacklist()
 if Toggle1
-    AND isPlaying() AND !(EndSec() < 85)
+    AND isPlaying() AND !(endSec() < 85)
     AND !kbActive() AND !scrollActive() {
     Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
     Sleep, 6000
@@ -134,14 +134,14 @@ return
 Speed2:
 CheckBlacklist()
 if Toggle1
-    AND isPlaying() AND !(EndSec() < 85)
+    AND isPlaying() AND !(endSec() < 85)
     AND !kbActive() AND !scrollActive() {
     Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
     Sleep, 6000
 }
 return
 
-disableSpeed:
+DisableSpeed:
 Toggle0 := 0
 Toggle1 := 0
 SetTimer, Speed0, Off
@@ -178,37 +178,37 @@ GetSongInfo() {
     title_a := StrSplit(name_a[1], A_Space)
     time := SubStr(title_a[title_a.MaxIndex()], 2, StrLen(title_a[title_a.MaxIndex()])-2)
     time_a := StrSplit(time, "`/")
-    curr_a := StrSplit(time_a[1], "`:")
-    end_a := StrSplit(time_a[2], "`:")
-    time_curr_sec := (60*curr_a[1]+curr_a[2])
-    time_end_sec := (60*end_a[1]+end_a[2])
+    time_curr_a := StrSplit(time_a[1], "`:")
+    time_curr_sec := (60*time_curr_a[1]+time_curr_a[2])
+    time_end_a := StrSplit(time_a[2], "`:")
+    time_end_sec := (60*time_end_a[1]+time_end_a[2])
     path := name_a[2]
 }
 
 CheckBlacklist() {
     blacklist := ["vmware", "notepad++"]
-    WinGetActiveTitle, currWinTitle
-    if bToggle {
+    WinGetActiveTitle, title_win
+    if B_Toggle {
         for i, v in blacklist {
-            if (currWinTitle == "vmware") {
+            if (title_win == "vmware") {
                 sleep, 2000
                 ; Refresh active title 
-                WinGetActiveTitle, currWinTitle ; Refresh
+                WinGetActiveTitle, title_win ; Refresh
                 return
             }
-            while inStr(currWinTitle, v, 0) {
+            while inStr(title_win, v, 0) {
                 Pause, On, 1
                 Sleep, 2000
                 Pause, Off, 1
                 ; Refresh active title
-                WinGetActiveTitle, currWinTitle ; Refresh
+                WinGetActiveTitle, title_win ; Refresh
             }
         }
     }
     return
 }
 
-EndSec() {
+endSec() {
     ctr := 0
     GetSongInfo()
     while (time_end_sec == "" OR time_curr_sec == "") {
@@ -218,7 +218,7 @@ EndSec() {
         Sleep, 5500
         if (ctr == 5) {
             msgbox, , , % "Time has remained empty. Exiting!", 2
-            Gosub disableSpeed
+            Gosub DisableSpeed
             return 0
         }
     }
@@ -236,7 +236,7 @@ isPlaying() {
             msgbox, , , % "Foobar2000 is not playing!", 1
         if (ctr == 5) {
             msgbox, , , % "Foobar2000 is still not playing. Exiting!", 2
-            Gosub disableSpeed
+            Gosub DisableSpeed
             return 0
         }
     }
