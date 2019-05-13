@@ -9,9 +9,9 @@ Global Toggle2
 Global name
 Global path
 Global title
-Global time
-Global curr_timeSec
-Global end_timeSec
+Global time_scrl
+Global time_curr_sec
+Global time_end_sec
 
 ; For testing
 ~^!i::
@@ -31,9 +31,7 @@ return
 ; Scroll pause
 ~WheelUp::
 ~WheelDown::
-Pause, On, 1
-Sleep, 2000
-Pause, Off, 1
+time_scrl := A_TickCount
 return
 
 ; Implement feature for when song gets deleted
@@ -117,7 +115,7 @@ Speed0:
 CheckBlacklist()
 if Toggle0
     AND isPlaying() AND !(EndSec() < 55)
-    AND !kbActive() {
+    AND !kbActive() AND !scrollActive() {
     Send, {Ctrl down}{Shift down}{Right}{Ctrl up}{Shift up}
     Sleep, 10000
 }
@@ -127,7 +125,7 @@ Speed1:
 CheckBlacklist()
 if Toggle1
     AND isPlaying() AND !(EndSec() < 85)
-    AND !kbActive() {
+    AND !kbActive() AND !scrollActive() {
     Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
     Sleep, 6000
 }
@@ -137,7 +135,7 @@ Speed2:
 CheckBlacklist()
 if Toggle1
     AND isPlaying() AND !(EndSec() < 85)
-    AND !kbActive() {
+    AND !kbActive() AND !scrollActive() {
     Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
     Sleep, 6000
 }
@@ -182,8 +180,8 @@ GetSongInfo() {
     time_a := StrSplit(time, "`/")
     curr_a := StrSplit(time_a[1], "`:")
     end_a := StrSplit(time_a[2], "`:")
-    curr_timeSec := (60*curr_a[1]+curr_a[2])
-    end_timeSec := (60*end_a[1]+end_a[2])
+    time_curr_sec := (60*curr_a[1]+curr_a[2])
+    time_end_sec := (60*end_a[1]+end_a[2])
     path := name_a[2]
 }
 
@@ -213,7 +211,7 @@ CheckBlacklist() {
 EndSec() {
     ctr := 0
     GetSongInfo()
-    while (end_timeSec == "" OR curr_timeSec == "") {
+    while (time_end_sec == "" OR time_curr_sec == "") {
         ctr++
         GetSongInfo()
         msgbox, , , % "Cannot get time!", 1
@@ -224,7 +222,7 @@ EndSec() {
             return 0
         }
     }
-    return (end_timeSec - curr_timeSec)
+    return (time_end_sec - time_curr_sec)
 }
 
 isPlaying() {
@@ -245,8 +243,17 @@ isPlaying() {
     return 1
 }
 
+scrollActive() {
+    if time_scrl {
+        time_elapsed := A_TickCount - time_scrl
+        if (time_elapsed < 2000) 
+            return 1
+    }
+    return 0
+}
+
 kbActive() {
-    if (A_TimeIdleKeyboard < 3000)
+    if (A_TimeIdleKeyboard < 2000)
         return 1
     return 0
 }
