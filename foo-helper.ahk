@@ -17,8 +17,8 @@ Global end_timeSec
 
 ; For testing
 ~^!i::
-    getSongInfo()
-    msgbox, , , % "Name is " name, 3
+getSongInfo()
+msgbox, , , % "Name is " name, 3
 return
 
 ~^Del::
@@ -27,14 +27,14 @@ return
 ~^Space::
 ~Media_Stop::
 ~Media_Play_Pause::
-    Gosub, disableSpeed
+Gosub, disableSpeed
 return
 
 ~WheelUp::
 ~WheelDown::
-    Pause, On, 1
-    Sleep, 2000
-    Pause, Off, 1
+Pause, On, 1
+Sleep, 2000
+Pause, Off, 1
 return
 
 ; Implement some feature for when song gets deleted
@@ -43,11 +43,11 @@ return
 
 ; Pause the loop if blacklisted process titles are running in the foreground
 ~^!b::
-    bToggle := !bToggle
-    if bToggle
-        msgbox, , , % "Blacklist Toggle : On", 1
-    else
-        msgbox, , , % "Blacklist Toggle : Off", 1
+bToggle := !bToggle
+if bToggle
+    msgbox, , , % "Blacklist Toggle : On", 1
+else
+    msgbox, , , % "Blacklist Toggle : Off", 1
 return
 
 ; Escape the blacklist when VMware escape seq is hit (in-progress)
@@ -58,91 +58,91 @@ return
 
 ~^0::
 ~^Numpad0::
-    Toggle0 := !Toggle0
-    if Toggle1 {
-        Toggle1 := !Toggle1
-    }
-    if Toggle0 {
-        SetTimer, Speed0, 200
-        msgbox, , , % "Speed 0 : On", 2
-    }
-    else {
-        SetTimer, Speed0, Off
-        SetTimer, Speed1, Off
-        msgbox, , , % "Speed 0 : Off", 2
-    }
+Toggle0 := !Toggle0
+if Toggle1 {
+    Toggle1 := !Toggle1
+}
+if Toggle0 {
+    SetTimer, Speed0, 200
+    msgbox, , , % "Speed 0 : On", 2
+}
+else {
+    SetTimer, Speed0, Off
+    SetTimer, Speed1, Off
+    msgbox, , , % "Speed 0 : Off", 2
+}
 return
 
 ~^1::
 ~^Numpad1::
-    Toggle1 := !Toggle1 
-    if Toggle0 {
-        Toggle0 := !Toggle0
-    }
-    if Toggle1 {
-        SetTimer, Speed1, 200
-        msgbox, , , % "Speed 1 : On", 1
-    }
-    else {
-        SetTimer, Speed0, Off
-        SetTimer, Speed1, Off
-        msgbox, , , % "Speed 1 : Off", 1
-    }
+Toggle1 := !Toggle1 
+if Toggle0 {
+    Toggle0 := !Toggle0
+}
+if Toggle1 {
+    SetTimer, Speed1, 200
+    msgbox, , , % "Speed 1 : On", 1
+}
+else {
+    SetTimer, Speed0, Off
+    SetTimer, Speed1, Off
+    msgbox, , , % "Speed 1 : Off", 1
+}
 return
 
 ~^2::
 ~^Numpad2::
-    Toggle2 := !Toggle2
-    if Toggle0 {
-        Toggle0 := !Toggle0
-    }
-    if Toggle1 {
-        Toggle1 := !Toggle1
-    }
-    if Toggle2 {
-        SetTimer, Speed1, 200
-        msgbox, , , % "Speed 2 : On", 1
-    }
-    else {
-        SetTimer, Speed0, Off
-        SetTimer, Speed1, Off
-        msgbox, , , % "Speed 2 : Off", 1
-    }
+Toggle2 := !Toggle2
+if Toggle0 {
+    Toggle0 := !Toggle0
+}
+if Toggle1 {
+    Toggle1 := !Toggle1
+}
+if Toggle2 {
+    SetTimer, Speed1, 200
+    msgbox, , , % "Speed 2 : On", 1
+}
+else {
+    SetTimer, Speed0, Off
+    SetTimer, Speed1, Off
+    msgbox, , , % "Speed 2 : Off", 1
+}
 return
 
 ; ####   Subroutines    ####
 
 Speed0:
-    checkBlacklist()
-    if Toggle0 AND !kbActive() AND isPlaying() AND !(endSec() < 55) {
-        Send, {Ctrl down}{Shift down}{Right}{Ctrl up}{Shift up}
-        Sleep, 10000
-    }
+checkBlacklist()
+if Toggle0 AND !kbActive() AND isPlaying() AND !(endSec() < 55) {
+    Send, {Ctrl down}{Shift down}{Right}{Ctrl up}{Shift up}
+    Sleep, 10000
+}
 return
 
 Speed1:
-    checkBlacklist()
-    if Toggle1 AND !kbActive() AND isPlaying() AND !(endSec() < 85) {
-        Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
-        Sleep, 6000
-    }
+checkBlacklist()
+if Toggle1 AND !kbActive() AND isPlaying() AND !(endSec() < 85) {
+    Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
+    Sleep, 6000
+}
 return
 
 Speed2:
-    checkBlacklist()
-    if Toggle2 AND !kbActive() AND isPlaying() AND !(endSec() < 85) {
-        Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
-        Sleep, 6000
-    }
+checkBlacklist()
+if Toggle2 AND !kbActive() AND isPlaying() AND !(endSec() < 85) {
+    Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
+    Sleep, 6000
+}
 return
 
 disableSpeed:
-    Toggle0 := 0
-    Toggle1 := 0
-    SetTimer, Speed0, Off
-    SetTimer, Speed1, Off
-    msgbox, , , % "Speed : Off", 1
-    exit
+Toggle0 := 0
+Toggle1 := 0
+SetTimer, Speed0, Off
+SetTimer, Speed1, Off
+msgbox, , , % "Speed : Off", 1
+exit
 
 ; ####   Functions    ####
 
