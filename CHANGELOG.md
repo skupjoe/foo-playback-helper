@@ -10,6 +10,9 @@
 - Scroll detection:
   - Pauses the speed times if mouse scroll is detected in last 3 seconds.
 
+### Added
+- Changelog
+
 ## [1.0.0] - 2019-05-12
 ### Added
 - First version commit.
