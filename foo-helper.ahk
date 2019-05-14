@@ -1,3 +1,4 @@
+#MaxHotkeysPerInterval 500
 #WinActivateForce
 #InstallKeybdHook
 #NoEnv
