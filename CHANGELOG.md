@@ -8,7 +8,14 @@
 ### Fix
 - Re-implement ChooseString mechanism or come up with better workaround.
 
-## [2.0.0] - 2019-05-20
+## [2.0.1] - 2019-05-21
+### Added
+= Move album trigger automatically clears missing/removed songs from Foobar2000 after has completed.
+
+### Fixed
+- Move album trigger improvements.
+
+## [2.0.0] - 2019-05-21
 ### Added
 - New Feature: Move Album
   - GUI window support for moving albums to second temp directory genre folder with hotkey.
@@ -41,7 +48,8 @@
 ### Added
 - First version commit.
 
-[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/skupjoe/foo-playback-helper/compare/v1.1.2...v2.0.0
 [1.1.2]: https://github.com/skupjoe/foo-playback-helper/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/skupjoe/foo-playback-helper/compare/v1.1.0...v1.1.1

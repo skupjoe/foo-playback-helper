@@ -49,12 +49,13 @@ return
 ~^!m::
 GetSongInfo()
 LoopGenres()
+Gosub, DisableSpeed
+Sleep, 1000
 Send {CtrlDown} {End} {CtrlUp}
+Sleep, 1000
 Send {CtrlDown} {AltDown} {o} {AltUp} {CtrlUp}
 Sleep, 2000
 Gosub, GenreGui
-Sleep, 2000
-Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
 return
 
 ~^0::
@@ -130,6 +131,8 @@ Go:
 Gui, Destroy
 dest := GetGenreFolder(Chosen)
 run, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir_nosp%" "%dest%" "%old_dir%" "%temp_dir_0%"
+Sleep, 5000
+Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
 return
 
 ; ############   Subroutines   ############
@@ -173,7 +176,7 @@ Toggle1 := 0
 SetTimer, Speed0, Off
 SetTimer, Speed1, Off
 msgbox, , , % "Speed : Off", 1
-exit
+return
 
 ; ############   Functions   ############
 
