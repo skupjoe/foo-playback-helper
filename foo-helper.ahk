@@ -1,8 +1,13 @@
+#Include, %A_ScriptDir%\lib\func.ahk
+
 #MaxHotkeysPerInterval 500
 #WinActivateForce
 #InstallKeybdHook
 #NoEnv
 
+Global old_dir := "Z:\scrap"
+Global temp_dir_0 := "Z:\temp0"
+Global temp_dir_1 := "Z:\temp1\_" ; pattern for your genre folders (eg. "Z:\temp1\_rock")
 Global B_Toggle := 1
 Global Toggle0
 Global Toggle1
@@ -10,15 +15,11 @@ Global Toggle2
 Global name
 Global path
 Global title
+Global genres
 Global time_scrl
 Global time_curr_sec
 Global time_end_sec
 
-; For testing
-~^!i::
-GetSongInfo()
-msgbox, , , % "Name is " name, 3
-return
 
 ~^Del::
 ~^End::
@@ -32,28 +33,28 @@ return
 ; Scroll pause
 ~WheelUp::
 ~WheelDown::
-time_scrl := A_TickCount
-return
-
-; Implement feature for when song gets deleted
-; (In-progress)
-~^+a::
+Global time_scrl := A_TickCount
 return
 
 ; Pause the loop for blacklisted titles
 ~^!b::
 B_Toggle := !B_Toggle
 if B_Toggle
-    msgbox, , , % "Blacklist Toggle : On", 1
+    msgbox, , , % "Blacklist : On", 1
 else
-    msgbox, , , % "Blacklist Toggle : Off", 1
+    msgbox, , , % "Blacklist : Off", 1
 return
 
-; Escape the blacklist when VMware escape seq is hit
-; (In-progress)
-~^+LAlt::
-~^!LShift::
-~+!LCtrl::
+; Move album
+~^!m::
+GetSongInfo()
+LoopGenres()
+Send {CtrlDown} {End} {CtrlUp}
+Send {CtrlDown} {AltDown} {o} {AltUp} {CtrlUp}
+Sleep, 2000
+Gosub, GenreGui
+Sleep, 2000
+Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
 return
 
 ~^0::
@@ -110,14 +111,36 @@ else {
 }
 return
 
-; ############   Subroutines    ############
+; ############   Gui Subroutines   ############
+
+GenreGui:
+Gui, Add, Edit, W150 R1 vSearchFor gSearch
+Gui, Add, DropDownList, W150 H250 vChosen Sort, %genres%
+Gui, Add, Button, default gGo, Go
+Gui, Show, AutoSize, Topic Search...
+return
+
+Search:
+Gui, Submit, NoHide
+GuiControl, ChooseString, Chosen, %SearchFor%
+SearchFor := {}
+return
+
+Go:
+Gui, Destroy
+dest := GetGenreFolder(Chosen)
+run, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir_nosp%" "%dest%" "%old_dir%" "%temp_dir_0%"
+return
+
+; ############   Subroutines   ############
 
 Speed0:
 CheckBlacklist()
 if Toggle0
     AND isPlaying() AND !(endSec() < 55)
-    AND !kbActive() AND !scrollActive() {
-    Send, {Ctrl down}{Shift down}{Right}{Ctrl up}{Shift up}
+    AND !kbActive() AND !scrollActive()
+{
+    Send, {CtrlDown}{ShiftDown}{Right}{CtrlUp}{ShiftUp}
     Sleep, 10000
 }
 return
@@ -126,8 +149,9 @@ Speed1:
 CheckBlacklist()
 if Toggle1
     AND isPlaying() AND !(endSec() < 85)
-    AND !kbActive() AND !scrollActive() {
-    Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
+    AND !kbActive() AND !scrollActive()
+{
+    Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
     Sleep, 6000
 }
 return
@@ -136,9 +160,10 @@ Speed2:
 CheckBlacklist()
 if Toggle1
     AND isPlaying() AND !(endSec() < 85)
-    AND !kbActive() AND !scrollActive() {
-    Send, {Ctrl down}{Shift down}{Up}{Ctrl up}{Shift up}
-    Sleep, 6000
+    AND !kbActive() AND !scrollActive()
+{
+    Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
+    Sleep, 3000
 }
 return
 
@@ -150,7 +175,7 @@ SetTimer, Speed1, Off
 msgbox, , , % "Speed : Off", 1
 exit
 
-; ############   Functions    ############
+; ############   Functions   ############
 
 WinGetAll(InType = "", In = "", OutType = "") {
     WinGet, wParam, List
@@ -180,33 +205,12 @@ GetSongInfo() {
     time := SubStr(title_a[title_a.MaxIndex()], 2, StrLen(title_a[title_a.MaxIndex()])-2)
     time_a := StrSplit(time, "`/")
     time_curr_a := StrSplit(time_a[1], "`:")
-    time_curr_sec := (60*time_curr_a[1]+time_curr_a[2])
     time_end_a := StrSplit(time_a[2], "`:")
+    time_curr_sec := (60*time_curr_a[1]+time_curr_a[2])
     time_end_sec := (60*time_end_a[1]+time_end_a[2])
     path := name_a[2]
-}
-
-CheckBlacklist() {
-    blacklist := ["vmware", "notepad++"]
-    WinGetActiveTitle, title_win
-    if B_Toggle {
-        for i, v in blacklist {
-            if (title_win == "vmware") {
-                sleep, 2000
-                ; Refresh active title 
-                WinGetActiveTitle, title_win ; Refresh
-                return
-            }
-            while inStr(title_win, v, 0) {
-                Pause, On, 1
-                Sleep, 2000
-                Pause, Off, 1
-                ; Refresh active title
-                WinGetActiveTitle, title_win ; Refresh
-            }
-        }
-    }
-    return
+    p_dir := GetParentDir(path)
+    global p_dir_nosp := StrReplace(p_dir, A_Space, "\\\")
 }
 
 endSec() {
@@ -224,6 +228,45 @@ endSec() {
         }
     }
     return (time_end_sec - time_curr_sec)
+}
+
+LoopGenres() {
+    genres := {}
+    Loop, Files, % temp_dir_1 . "*", D
+    if A_LoopFileAttrib contains D
+        if SubStr(A_LoopFileName, 1, 1) = "_"
+        genres .= SubStr(A_LoopFileName, 2) . "|"
+    if SubStr(genres, 0) = "|"
+    global genres := SubStr(genres, 1, -1)
+}
+
+GetGenreFolder(genre) {
+    if (genre = "") {
+        msgbox, , , % "No genre specified!", 2
+        return 0
+    }
+    return temp_dir_1 . genre
+}
+
+CheckBlacklist() {
+    blacklist := ["vmware", "notepad++"]
+    WinGetActiveTitle, title_win
+    if B_Toggle {
+        for i, v in blacklist {
+            if (title_win == "vmware") {
+                sleep, 2000
+                WinGetActiveTitle, title_win ; Refresh
+                return
+            }
+            while inStr(title_win, v, 0) {
+                Pause, On, 1
+                Sleep, 2000
+                Pause, Off, 1
+                WinGetActiveTitle, title_win ; Refresh
+            }
+        }
+    }
+    return
 }
 
 isPlaying() {
@@ -259,9 +302,5 @@ kbActive() {
     return 0
 }
 
-; If name has "[Skit, Intro, Outro, Interlude, Acapella]" deliver notification
-; (In-progress)
-isSkitIntro ()
-    return 
 
 F9::Reload
