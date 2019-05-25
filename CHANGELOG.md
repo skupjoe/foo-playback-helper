@@ -2,15 +2,28 @@
 
 ## [Unreleased] - TBD
 ### Change
-- Add a genre selection confirmation window.
 - Improve scrolling hotkey logic to be more efficient, or limit scrolling updates.
 
 ### Fix
 - Re-implement ChooseString mechanism or come up with better workaround.
 
+## [2.1.0] - 2019-05-24
+### Added
+- Move Album:
+  - Genre selection confirmation window appears before move, with ability to cancel.
+  - Checks GetSongInfo() and attempts to fix missing info by starting/stopping music.
+    - Terminates if information still cannot be obtained.
+  - Move album trigger workflow opens containing folder (Ctrl+Alt+o) prior to moving.
+  - Move album trigger workflow starts next song after move completes.
+  - Move album window now has title. Removed minimize/maximize buttons.
+
+### Fixed
+- Move Album:
+  - Closing window via "x" close button now properly destroys GUI window and exits the app.
+  - 
 ## [2.0.1] - 2019-05-21
 ### Added
-= Move album trigger automatically clears missing/removed songs from Foobar2000 after has completed.
+- Move album trigger automatically clears missing/removed songs from Foobar2000 after has completed.
 
 ### Fixed
 - Move album trigger improvements.
@@ -48,7 +61,8 @@
 ### Added
 - First version commit.
 
-[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/skupjoe/foo-playback-helper/compare/v1.1.2...v2.0.0
 [1.1.2]: https://github.com/skupjoe/foo-playback-helper/compare/v1.1.1...v1.1.2

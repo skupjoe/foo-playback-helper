@@ -48,6 +48,15 @@ return
 ; Move album
 ~^!m::
 GetSongInfo()
+if (name = "foobar2000") {
+    Send {CtrlDown} {Home} {CtrlUp}
+    Sleep, 3500
+    GetSongInfo()
+    if (name = "foobar2000") {
+        msgbox, , , % "Foorbar2000 must be playing for move album to work!", 2
+        Exit
+    }
+}
 LoopGenres()
 Gosub, DisableSpeed
 Sleep, 1000
@@ -115,10 +124,11 @@ return
 ; ############   Gui Subroutines   ############
 
 GenreGui:
+Gui -MaximizeBox -MinimizeBox
 Gui, Add, Edit, W150 R1 vSearchFor gSearch
 Gui, Add, DropDownList, W150 H250 vChosen Sort, %genres%
 Gui, Add, Button, default gGo, Go
-Gui, Show, AutoSize, Topic Search...
+Gui, Show, AutoSize, Select Genre
 return
 
 Search:
@@ -129,11 +139,23 @@ return
 
 Go:
 Gui, Destroy
+msgbox, 1, Confirm Genre, % "Genre: " chosen,
+IfMsgBox, Cancel
+    Exit
+Gosub, GoSeq
+
+GoSeq:
 dest := GetGenreFolder(Chosen)
 run, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir_nosp%" "%dest%" "%old_dir%" "%temp_dir_0%"
 Sleep, 5000
 Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
+Sleep, 2500
+Send {CtrlDown} {Home} {CtrlUp}
 return
+
+GuiClose:
+Gui, Destroy
+Exit
 
 ; ############   Subroutines   ############
 
@@ -166,7 +188,7 @@ if Toggle1
     AND !kbActive() AND !scrollActive()
 {
     Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
-    Sleep, 3000
+    Sleep, 8000
 }
 return
 
