@@ -11,12 +11,12 @@ global ParentDir = FixSpaces(A_Args[4])
 if (A_Args.MaxIndex() != 3) AND (A_Args.MaxIndex() != 4)
 {
 	MsgBox, Invalid number of arguments!
-	ExitApp
+	ExitApp, 1
 }
 
 CheckDirs() {
 	IfNOTExist, %InDir%
-		ErrorLevel = 1
+		ErrorLevel == 1
 	IfNOTExist, %OutDir%
 		FileCreateDir, %OutDir%
 	IfNOTExist, %OldDir%
@@ -24,7 +24,7 @@ CheckDirs() {
 	if (ErrorLevel)
 	{
 		UpdateCircle("Dir is not valid.")
-		ExitApp
+		ExitApp, 1
 	}
 	return
 }
@@ -38,7 +38,7 @@ Move(index, Src, Des) {
 		FileMove, %Src%, %Des%
 	} catch e {
 		MsgBox, FileMoveError :: %e%
-		ExitApp
+		ExitApp, 1
 	}
 	return
 }
@@ -46,13 +46,13 @@ Move(index, Src, Des) {
 UpdateCircle(msg) {
 	global
 	loop 3
-		if (A_index = 1)
+		if (A_index == 1)
 			loop 255
 				CircleProgress.Update(100, msg)
-		else if (A_index = 2)
+		else if (A_index == 2)
 			loop 255
 				CircleProgress.Update(100, msg, (255 - A_index))
-		else if (A_index = 3)
+		else if (A_index == 3)
 			return
 }
 
@@ -146,7 +146,7 @@ main() {
 	else
 	{
 		UpdateCircle("No files to move!")
-		ExitApp
+		ExitApp, 1
 	}
 
 	sleep 100

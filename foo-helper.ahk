@@ -27,134 +27,136 @@ Global time_end_sec
 ~^Space::
 ~Media_Stop::
 ~Media_Play_Pause::
-Gosub, DisableSpeed
+    Gosub, DisableSpeed
 return
 
 ; Scroll pause
 ~WheelUp::
 ~WheelDown::
-Global time_scrl := A_TickCount
+    Global time_scrl := A_TickCount
 return
 
 ; Pause the loop for blacklisted titles
 ~^!b::
-B_Toggle := !B_Toggle
-if B_Toggle
-    msgbox, , , % "Blacklist : On", 1
-else
-    msgbox, , , % "Blacklist : Off", 1
+    B_Toggle := !B_Toggle
+    if B_Toggle
+        msgbox, , , % "Blacklist : On", 1
+    else
+        msgbox, , , % "Blacklist : Off", 1
 return
 
 ; Move album
 ~^!m::
-GetSongInfo()
-if (name = "foobar2000") {
-    Send {CtrlDown} {Home} {CtrlUp}
-    Sleep, 3500
     GetSongInfo()
-    if (name = "foobar2000") {
-        msgbox, , , % "Foorbar2000 must be playing for move album to work!", 2
-        Exit
+    if (name == "foobar2000") {
+        Send {CtrlDown} {Home} {CtrlUp}
+        Sleep, 3500
+        GetSongInfo()
+        if (name == "foobar2000") {
+            msgbox, , , % "Foorbar2000 must be playing for move album to work!", 2
+            Exit
+        }
     }
-}
-LoopGenres()
-Gosub, DisableSpeed
-Sleep, 1000
-Send {CtrlDown} {End} {CtrlUp}
-Sleep, 1000
-Send {CtrlDown} {AltDown} {o} {AltUp} {CtrlUp}
-Sleep, 2000
-Gosub, GenreGui
+    LoopGenres()
+    Gosub, DisableSpeed
+    Sleep, 1000
+    Send {CtrlDown} {End} {CtrlUp}
+    Sleep, 1000
+    Send {CtrlDown} {AltDown} {o} {AltUp} {CtrlUp}
+    Sleep, 2000
+    Gosub, GenreGui
 return
 
 ~^0::
 ~^Numpad0::
-Toggle0 := !Toggle0
-if Toggle1 {
-    Toggle1 := !Toggle1
-}
-if Toggle0 {
-    SetTimer, Speed0, 200
-    msgbox, , , % "Speed 0 : On", 2
-}
-else {
-    SetTimer, Speed0, Off
-    SetTimer, Speed1, Off
-    msgbox, , , % "Speed 0 : Off", 2
-}
+    Toggle0 := !Toggle0
+    if Toggle1 {
+        Toggle1 := !Toggle1
+    }
+    if Toggle0 {
+        SetTimer, Speed0, 200
+        msgbox, , , % "Speed 0 : On", 2
+    }
+    else {
+        SetTimer, Speed0, Off
+        SetTimer, Speed1, Off
+        msgbox, , , % "Speed 0 : Off", 2
+    }
 return
 
 ~^1::
 ~^Numpad1::
-Toggle1 := !Toggle1 
-if Toggle0 {
-    Toggle0 := !Toggle0
-}
-if Toggle1 {
-    SetTimer, Speed1, 200
-    msgbox, , , % "Speed 1 : On", 1
-}
-else {
-    SetTimer, Speed0, Off
-    SetTimer, Speed1, Off
-    msgbox, , , % "Speed 1 : Off", 1
-}
+    Toggle1 := !Toggle1 
+    if Toggle0 {
+        Toggle0 := !Toggle0
+    }
+    if Toggle1 {
+        SetTimer, Speed1, 200
+        msgbox, , , % "Speed 1 : On", 1
+    }
+    else {
+        SetTimer, Speed0, Off
+        SetTimer, Speed1, Off
+        msgbox, , , % "Speed 1 : Off", 1
+    }
 return
 
 ~^2::
 ~^Numpad2::
-Toggle2 := !Toggle2
-if Toggle0 {
-    Toggle0 := !Toggle0
-}
-if Toggle1 {
-    Toggle1 := !Toggle1
-}
-if Toggle2 {
-    SetTimer, Speed1, 200
-    msgbox, , , % "Speed 2 : On", 1
-}
-else {
-    SetTimer, Speed0, Off
-    SetTimer, Speed1, Off
-    msgbox, , , % "Speed 2 : Off", 1
-}
+    Toggle2 := !Toggle2
+    if Toggle0 {
+        Toggle0 := !Toggle0
+    }
+    if Toggle1 {
+        Toggle1 := !Toggle1
+    }
+    if Toggle2 {
+        SetTimer, Speed1, 200
+        msgbox, , , % "Speed 2 : On", 1
+    }
+    else {
+        SetTimer, Speed0, Off
+        SetTimer, Speed1, Off
+        msgbox, , , % "Speed 2 : Off", 1
+    }
 return
 
 ; ############   Gui Subroutines   ############
 
 GenreGui:
-Gui -MaximizeBox -MinimizeBox
-Gui, Add, Edit, W150 R1 vSearchFor gSearch
-Gui, Add, DropDownList, W150 H250 vChosen Sort, %genres%
-Gui, Add, Button, default gGo, Go
-Gui, Show, AutoSize, Select Genre
+    Gui -MaximizeBox -MinimizeBox
+    Gui, Add, Edit, W150 R1 vSearchFor gSearch
+    Gui, Add, DropDownList, W150 H250 Sort vChosen, % "none||" genres
+    Gui, Add, Button, default gGo, Go
+    Gui, Show, AutoSize, Select Genre
 return
 
 Search:
-Gui, Submit, NoHide
-GuiControl, ChooseString, Chosen, %SearchFor%
-SearchFor := {}
+    Gui, Submit, NoHide
+    GuiControl, ChooseString, Chosen, %SearchFor%
+    SearchFor := {}
 return
 
 Go:
-Gui, Destroy
-msgbox, 1, Confirm Genre, % "Genre: " chosen,
-IfMsgBox, Cancel
-    Exit
-Gosub, GoSeq
+    Gui, Submit, NoHide
+    Gui, Destroy
+    msgbox, 1, Confirm Genre, % "Genre: " chosen,
+    IfMsgBox, Cancel
+        Exit
+    Gosub, GoSeq
+return
 
 GoSeq:
-dest := GetGenreFolder(Chosen)
-run, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir_nosp%" "%dest%" "%old_dir%" "%temp_dir_0%"
-Sleep, 5000
-Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
-Sleep, 2500
-Send {CtrlDown} {Home} {CtrlUp}
+    dest := GetGenreFolder(Chosen)
+    RunWait, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir_nosp%" "%dest%" "%old_dir%" "%temp_dir_0%"
+    Sleep, 5000
+    Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
+    Sleep, 2500
+    Send {CtrlDown} {Home} {CtrlUp}
 return
 
 GuiClose:
-Gui, Destroy
+    Gui, Destroy
 Exit
 
 ; ############   Subroutines   ############
@@ -193,11 +195,11 @@ if Toggle1
 return
 
 DisableSpeed:
-Toggle0 := 0
-Toggle1 := 0
-SetTimer, Speed0, Off
-SetTimer, Speed1, Off
-msgbox, , , % "Speed : Off", 1
+    Toggle0 := 0
+    Toggle1 := 0
+    SetTimer, Speed0, Off
+    SetTimer, Speed1, Off
+    msgbox, , , % "Speed : Off", 1
 return
 
 ; ############   Functions   ############
@@ -261,12 +263,11 @@ LoopGenres() {
     if A_LoopFileAttrib contains D
         if SubStr(A_LoopFileName, 1, 1) = "_"
         genres .= SubStr(A_LoopFileName, 2) . "|"
-    if SubStr(genres, 0) = "|"
-    global genres := SubStr(genres, 1, -1)
+    return genres
 }
 
 GetGenreFolder(genre) {
-    if (genre = "") {
+    if (genre == "") {
         msgbox, , , % "No genre specified!", 2
         return 0
     }

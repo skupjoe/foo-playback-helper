@@ -1,11 +1,30 @@
 # Changelog
 
 ## [Unreleased] - TBD
+### Add
+- Move Album:
+  - Sanity check: Compare # of items in playlist vs music files in folder.
+  - Detect when Foobar2000 is off (not just Paused/Stopped) and Exit.
+
 ### Change
 - Improve scrolling hotkey logic to be more efficient, or limit scrolling updates.
 
 ### Fix
-- Re-implement ChooseString mechanism or come up with better workaround.
+- Move Album:
+  - Move album two levels deep does not remove empty parent folder.
+
+## [2.2.0] - 2019-05-25
+### Changed
+- Move Album:
+  - RunWait() instead of Run().
+  - ExitApp() uses exit codes for errors.
+- First level indentation added for hotkeys & subroutines.
+
+### Fixed
+- Move Album:
+  - ChooseString fixed and genre selection is working reliably now.
+- Using logical comparison operators for if() statements.
+- LoopGenre() includes return statement.
 
 ## [2.1.0] - 2019-05-24
 ### Added
@@ -20,7 +39,7 @@
 ### Fixed
 - Move Album:
   - Closing window via "x" close button now properly destroys GUI window and exits the app.
-  - 
+
 ## [2.0.1] - 2019-05-21
 ### Added
 - Move album trigger automatically clears missing/removed songs from Foobar2000 after has completed.
@@ -61,7 +80,8 @@
 ### Added
 - First version commit.
 
-[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/skupjoe/foo-playback-helper/compare/v1.1.2...v2.0.0
