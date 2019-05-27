@@ -10,8 +10,14 @@
 - Improve scrolling hotkey logic to be more efficient, or limit scrolling updates.
 
 ### Fix
+- Make DisableSpeed fix error loop when name cannot obtained during speed loop.
 - Move Album:
   - Move album two levels deep does not remove empty parent folder.
+
+## [2.2.1] - 2019-05-27
+### Changed
+- Reduced global vars with ByRef.
+- Moved time parsing vars from GetSongInfo() to endSec().
 
 ## [2.2.0] - 2019-05-25
 ### Changed
@@ -80,7 +86,8 @@
 ### Added
 - First version commit.
 
-[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.0...v2.0.1

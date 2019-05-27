@@ -9,16 +9,6 @@ Global old_dir := "Z:\scrap"
 Global temp_dir_0 := "Z:\temp0"
 Global temp_dir_1 := "Z:\temp1\_" ; pattern for your genre folders (eg. "Z:\temp1\_rock")
 Global B_Toggle := 1
-Global Toggle0
-Global Toggle1
-Global Toggle2
-Global name
-Global path
-Global title
-Global genres
-Global time_scrl
-Global time_curr_sec
-Global time_end_sec
 
 
 ~^Del::
@@ -47,17 +37,17 @@ return
 
 ; Move album
 ~^!m::
-    GetSongInfo()
+    GetSongInfo(name,, p_dir)
     if (name == "foobar2000") {
         Send {CtrlDown} {Home} {CtrlUp}
         Sleep, 3500
-        GetSongInfo()
+        GetSongInfo(name)
         if (name == "foobar2000") {
             msgbox, , , % "Foorbar2000 must be playing for move album to work!", 2
             Exit
         }
     }
-    LoopGenres()
+    LoopGenres(genres)
     Gosub, DisableSpeed
     Sleep, 1000
     Send {CtrlDown} {End} {CtrlUp}
@@ -148,7 +138,7 @@ return
 
 GoSeq:
     dest := GetGenreFolder(Chosen)
-    RunWait, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir_nosp%" "%dest%" "%old_dir%" "%temp_dir_0%"
+    RunWait, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir%" "%dest%" "%old_dir%" "%temp_dir_0%"
     Sleep, 5000
     Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
     Sleep, 2500
@@ -204,7 +194,7 @@ return
 
 ; ############   Functions   ############
 
-WinGetAll(InType = "", In = "", OutType = "") {
+WinGetAll(InType="", In="", OutType="") {
     WinGet, wParam, List
     Window := {}
     loop %wParam% {
@@ -225,27 +215,28 @@ WinGetAll(InType = "", In = "", OutType = "") {
     return % Window
 }
 
-GetSongInfo() {
+GetSongInfo(ByRef name, ByRef time="", ByRef p_dir_nosp="") {
     name := WinGetAll("Proc", "foobar2000.exe", "Name")
     name_a := StrSplit(name, "` -:- ")
     title_a := StrSplit(name_a[1], A_Space)
     time := SubStr(title_a[title_a.MaxIndex()], 2, StrLen(title_a[title_a.MaxIndex()])-2)
+    path := name_a[2]
+    p_dir := GetParentDir(path)
+    p_dir_nosp := StrReplace(p_dir, A_Space, "\\\")
+    return
+}
+
+endSec() {
+    ctr := 0
+    GetSongInfo(name, time)
     time_a := StrSplit(time, "`/")
     time_curr_a := StrSplit(time_a[1], "`:")
     time_end_a := StrSplit(time_a[2], "`:")
     time_curr_sec := (60*time_curr_a[1]+time_curr_a[2])
     time_end_sec := (60*time_end_a[1]+time_end_a[2])
-    path := name_a[2]
-    p_dir := GetParentDir(path)
-    global p_dir_nosp := StrReplace(p_dir, A_Space, "\\\")
-}
-
-endSec() {
-    ctr := 0
-    GetSongInfo()
     while (time_end_sec == "" OR time_curr_sec == "") {
         ctr++
-        GetSongInfo()
+        GetSongInfo(name, time)
         msgbox, , , % "Cannot get time!", 1
         Sleep, 5500
         if (ctr == 5) {
@@ -257,13 +248,13 @@ endSec() {
     return (time_end_sec - time_curr_sec)
 }
 
-LoopGenres() {
+LoopGenres(ByRef genres) {
     genres := {}
     Loop, Files, % temp_dir_1 . "*", D
     if A_LoopFileAttrib contains D
         if SubStr(A_LoopFileName, 1, 1) = "_"
         genres .= SubStr(A_LoopFileName, 2) . "|"
-    return genres
+    return
 }
 
 GetGenreFolder(genre) {
@@ -297,10 +288,10 @@ CheckBlacklist() {
 
 isPlaying() {
     ctr := 0
-    GetSongInfo()
+    GetSongInfo(name)
     while (name == "foobar2000") {
         ctr++
-        GetSongInfo()
+        GetSongInfo(name)
         Sleep, 5500
         if (ctr not in 1,2)
             msgbox, , , % "Foobar2000 is not playing!", 1
