@@ -101,12 +101,13 @@ Global B_Toggle := 1
         Toggle1 := !Toggle1
     }
     if Toggle2 {
-        SetTimer, Speed1, 200
+        SetTimer, Speed2, 200
         msgbox, , , % "Speed 2 : On", 1
     }
     else {
         SetTimer, Speed0, Off
         SetTimer, Speed1, Off
+        SetTimer, Speed2, Off
         msgbox, , , % "Speed 2 : Off", 1
     }
     return
@@ -175,26 +176,27 @@ Speed1:
 
 Speed2:
     CheckBlacklist()
-    if Toggle1
+    if Toggle2
         AND isPlaying() AND !(endSec() < 85)
         AND !kbActive() AND !scrollActive()
     {
         Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
-        Sleep, 8000
+        Sleep, 3000
     }
     return
 
 DisableSpeed:
-    Toggle0 := 0
-    Toggle1 := 0
-    SetTimer, Speed0, Off
-    SetTimer, Speed1, Off
+    for i in range(0, 3) 
+    {
+        Toggle%i% := 0
+        SetTimer, Speed%i%, Off
+    }
     msgbox, , , % "Speed : Off", 1
     return
 
 ; --- Functions -------------------
 
-WinGetAll(InType="", In="", OutType="") {
+WinGetAll(InType:="", In:="", OutType:="") {
     WinGet, wParam, List
     Window := {}
     loop %wParam% {
@@ -215,7 +217,7 @@ WinGetAll(InType="", In="", OutType="") {
     return % Window
 }
 
-GetSongInfo(ByRef name, ByRef time="", ByRef p_dir_nosp="") {
+GetSongInfo(ByRef name, ByRef time:="", ByRef p_dir_nosp:="") {
     name := WinGetAll("Proc", "foobar2000.exe", "Name")
     name_a := StrSplit(name, "` -:- ")
     title_a := StrSplit(name_a[1], A_Space)
