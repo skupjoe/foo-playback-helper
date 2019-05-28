@@ -3,6 +3,7 @@
 ## [Unreleased] - TBD
 ### Add
 - Move Album:
+  - Warning: Attempt to move while Foobar2000 is playing.
   - Sanity check: Compare # of items in playlist vs music files in folder.
   - Detect when Foobar2000 is off (not just Paused/Stopped) and Exit.
 

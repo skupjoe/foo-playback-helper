@@ -18,13 +18,13 @@ Global B_Toggle := 1
 ~Media_Stop::
 ~Media_Play_Pause::
     Gosub, DisableSpeed
-return
+    return
 
 ; Scroll pause
 ~WheelUp::
 ~WheelDown::
     Global time_scrl := A_TickCount
-return
+    return
 
 ; Pause the loop for blacklisted titles
 ~^!b::
@@ -33,7 +33,7 @@ return
         msgbox, , , % "Blacklist : On", 1
     else
         msgbox, , , % "Blacklist : Off", 1
-return
+    return
 
 ; Move album
 ~^!m::
@@ -55,7 +55,7 @@ return
     Send {CtrlDown} {AltDown} {o} {AltUp} {CtrlUp}
     Sleep, 2000
     Gosub, GenreGui
-return
+    return
 
 ~^0::
 ~^Numpad0::
@@ -72,7 +72,7 @@ return
         SetTimer, Speed1, Off
         msgbox, , , % "Speed 0 : Off", 2
     }
-return
+    return
 
 ~^1::
 ~^Numpad1::
@@ -89,7 +89,7 @@ return
         SetTimer, Speed1, Off
         msgbox, , , % "Speed 1 : Off", 1
     }
-return
+    return
 
 ~^2::
 ~^Numpad2::
@@ -109,9 +109,9 @@ return
         SetTimer, Speed1, Off
         msgbox, , , % "Speed 2 : Off", 1
     }
-return
+    return
 
-; ############   Gui Subroutines   ############
+; --- Gui Subroutines -------------
 
 GenreGui:
     Gui -MaximizeBox -MinimizeBox
@@ -119,13 +119,13 @@ GenreGui:
     Gui, Add, DropDownList, W150 H250 Sort vChosen, % "none||" genres
     Gui, Add, Button, default gGo, Go
     Gui, Show, AutoSize, Select Genre
-return
+    return
 
 Search:
     Gui, Submit, NoHide
     GuiControl, ChooseString, Chosen, %SearchFor%
     SearchFor := {}
-return
+    return
 
 Go:
     Gui, Submit, NoHide
@@ -134,7 +134,7 @@ Go:
     IfMsgBox, Cancel
         Exit
     Gosub, GoSeq
-return
+    return
 
 GoSeq:
     dest := GetGenreFolder(Chosen)
@@ -143,46 +143,46 @@ GoSeq:
     Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
     Sleep, 2500
     Send {CtrlDown} {Home} {CtrlUp}
-return
+    return
 
 GuiClose:
     Gui, Destroy
-Exit
+    Exit
 
-; ############   Subroutines   ############
+; --- Subroutines -----------------
 
 Speed0:
-CheckBlacklist()
-if Toggle0
-    AND isPlaying() AND !(endSec() < 55)
-    AND !kbActive() AND !scrollActive()
-{
-    Send, {CtrlDown}{ShiftDown}{Right}{CtrlUp}{ShiftUp}
-    Sleep, 10000
-}
-return
+    CheckBlacklist()
+    if Toggle0
+        AND isPlaying() AND !(endSec() < 55)
+        AND !kbActive() AND !scrollActive()
+    {
+        Send, {CtrlDown}{ShiftDown}{Right}{CtrlUp}{ShiftUp}
+        Sleep, 10000
+    }
+    return
 
 Speed1:
-CheckBlacklist()
-if Toggle1
-    AND isPlaying() AND !(endSec() < 85)
-    AND !kbActive() AND !scrollActive()
-{
-    Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
-    Sleep, 6000
-}
-return
+    CheckBlacklist()
+    if Toggle1
+        AND isPlaying() AND !(endSec() < 85)
+        AND !kbActive() AND !scrollActive()
+    {
+        Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
+        Sleep, 6000
+    }
+    return
 
 Speed2:
-CheckBlacklist()
-if Toggle1
-    AND isPlaying() AND !(endSec() < 85)
-    AND !kbActive() AND !scrollActive()
-{
-    Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
-    Sleep, 8000
-}
-return
+    CheckBlacklist()
+    if Toggle1
+        AND isPlaying() AND !(endSec() < 85)
+        AND !kbActive() AND !scrollActive()
+    {
+        Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
+        Sleep, 8000
+    }
+    return
 
 DisableSpeed:
     Toggle0 := 0
@@ -190,9 +190,9 @@ DisableSpeed:
     SetTimer, Speed0, Off
     SetTimer, Speed1, Off
     msgbox, , , % "Speed : Off", 1
-return
+    return
 
-; ############   Functions   ############
+; --- Functions -------------------
 
 WinGetAll(InType="", In="", OutType="") {
     WinGet, wParam, List
