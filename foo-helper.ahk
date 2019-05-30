@@ -11,6 +11,35 @@ Global temp_dir_1 := "Z:\temp1\_" ; pattern for your genre folders (eg. "Z:\temp
 Global B_Toggle := 1
 
 
+; Speed triggers 0-9. Must be at top.
+loop, 10
+{
+    Hotkey, % "~^" A_Index-1, Trigger_a
+    Hotkey, % "~^Numpad" A_Index-1, Trigger_b
+}
+
+Trigger_a:
+Trigger_b:
+    i := SubStr(A_ThisHotkey, 0, 1)
+    Toggle%i% := !Toggle%i%
+    if (i or (i == 0))
+    {
+        if (Toggle%i%)
+        {
+            loop, 10
+                if (A_Index != i)
+                    SetTimer, Speed%i%, Off
+            SetTimer, Speed%i%, 200
+            msgbox, , , % "Speed " i " : On", 2
+        }
+        else
+        {
+            SetTimer, % "Speed" . i, Off
+            msgbox, , , % "Speed " i " : Off", 1
+        }
+    }
+    return
+
 ~^Del::
 ~^End::
 ~^Home::
@@ -57,61 +86,6 @@ Global B_Toggle := 1
     Gosub, GenreGui
     return
 
-~^0::
-~^Numpad0::
-    Toggle0 := !Toggle0
-    if Toggle1 {
-        Toggle1 := !Toggle1
-    }
-    if Toggle0 {
-        SetTimer, Speed0, 200
-        msgbox, , , % "Speed 0 : On", 2
-    }
-    else {
-        SetTimer, Speed0, Off
-        SetTimer, Speed1, Off
-        msgbox, , , % "Speed 0 : Off", 2
-    }
-    return
-
-~^1::
-~^Numpad1::
-    Toggle1 := !Toggle1 
-    if Toggle0 {
-        Toggle0 := !Toggle0
-    }
-    if Toggle1 {
-        SetTimer, Speed1, 200
-        msgbox, , , % "Speed 1 : On", 1
-    }
-    else {
-        SetTimer, Speed0, Off
-        SetTimer, Speed1, Off
-        msgbox, , , % "Speed 1 : Off", 1
-    }
-    return
-
-~^2::
-~^Numpad2::
-    Toggle2 := !Toggle2
-    if Toggle0 {
-        Toggle0 := !Toggle0
-    }
-    if Toggle1 {
-        Toggle1 := !Toggle1
-    }
-    if Toggle2 {
-        SetTimer, Speed2, 200
-        msgbox, , , % "Speed 2 : On", 1
-    }
-    else {
-        SetTimer, Speed0, Off
-        SetTimer, Speed1, Off
-        SetTimer, Speed2, Off
-        msgbox, , , % "Speed 2 : Off", 1
-    }
-    return
-
 ; --- Gui Subroutines -------------
 
 GenreGui:
@@ -154,7 +128,7 @@ GuiClose:
 
 Speed0:
     CheckBlacklist()
-    if Toggle0
+    if (Toggle0)
         AND isPlaying() AND !(endSec() < 55)
         AND !kbActive() AND !scrollActive()
     {
@@ -165,7 +139,7 @@ Speed0:
 
 Speed1:
     CheckBlacklist()
-    if Toggle1
+    if (Toggle1)
         AND isPlaying() AND !(endSec() < 85)
         AND !kbActive() AND !scrollActive()
     {
@@ -176,7 +150,7 @@ Speed1:
 
 Speed2:
     CheckBlacklist()
-    if Toggle2
+    if (Toggle2)
         AND isPlaying() AND !(endSec() < 85)
         AND !kbActive() AND !scrollActive()
     {

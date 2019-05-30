@@ -8,12 +8,23 @@
   - Detect when Foobar2000 is off (not just Paused/Stopped) and Exit.
 
 ### Change
+- Dynamically create speed setting subroutines.
 - Improve scrolling hotkey logic to be more efficient, or limit scrolling updates.
 
 ### Fix
-- Make DisableSpeed fix error loop when name cannot obtained during speed loop.
+- Make DisableSpeed subroutine fix error loop when name cannot obtained during speed loop.
 - Move Album:
   - Move album two levels deep does not remove empty parent folder.
+
+## [2.2.5] - 2019-05-30
+### Changed
+- Dynamic creation for speed triggers (Ctrl+Num0-9) instead of static hotkeys.
+  - Note: Limited to 3 speed settings at the moment. Speed subroutines are still static. Working on this.
+- Functionized DisableSpeed subroutine.
+- Reduced the total amount of global vars by using ByRef.
+
+### Fixed
+- Speed2 toggle is working properly.
 
 ## [2.2.1] - 2019-05-27
 ### Changed
@@ -87,7 +98,8 @@
 ### Added
 - First version commit.
 
-[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.5...HEAD
+[2.2.5]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.1...v2.2.5
 [2.2.1]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.0.1...v2.1.0
