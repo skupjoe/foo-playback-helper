@@ -24,11 +24,15 @@ Trigger_b:
     Toggle%i% := !Toggle%i%
     if (i or (i == 0))
     {
-        if (Toggle%i%)
+        if Toggle%i%
         {
             loop, 10
-                if (A_Index != i)
-                    SetTimer, Speed%i%, Off
+                if A_Index != i
+                {
+                    Toggle%A_Index% := 0
+                    if Speed%A_Index%
+                        SetTimer, Speed%A_Index%, Off
+                }
             SetTimer, Speed%i%, 200
             msgbox, , , % "Speed " i " : On", 2
         }
@@ -201,7 +205,7 @@ GetSongInfo(ByRef name, ByRef time:="", ByRef p_dir_nosp:="") {
     return
 }
 
-endSec() {
+EndSec() {
     ctr := 0
     GetSongInfo(name, time)
     time_a := StrSplit(time, "`/")
@@ -241,10 +245,10 @@ GetGenreFolder(genre) {
 }
 
 Check(end_sec) {
-    if !(endSec() < end_sec)
-            AND !kbActive()
-            AND !scrollActive()
-            AND isPlaying()
+    if !(EndSec() < end_sec)
+            AND !KbActive()
+            AND !ScrollActive()
+            AND IsPlaying()
         return 1
     else
         return 0
@@ -271,7 +275,7 @@ CheckBlacklist() {
     return
 }
 
-isPlaying() {
+IsPlaying() {
     ctr := 0
     GetSongInfo(name)
     while (name == "foobar2000") {
@@ -289,7 +293,7 @@ isPlaying() {
     return 1
 }
 
-scrollActive() {
+ScrollActive() {
     if time_scrl {
         time_elapsed := A_TickCount - time_scrl
         if (time_elapsed < 2000) 
@@ -298,7 +302,7 @@ scrollActive() {
     return 0
 }
 
-kbActive() {
+KbActive() {
     if (A_TimeIdleKeyboard < 2000)
         return 1
     return 0
