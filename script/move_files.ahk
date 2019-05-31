@@ -79,9 +79,11 @@ main() {
 			File%Count%Name := A_LoopFileName
 			File%Count%Dir := A_LoopFileLongPath
 			File%Count% := A_LoopFileFullPath
-			if ParentDir !=
+			if not ParentDir
+			{
 				File%Count%ParentDir := GetParentDir(A_LoopFileLongPath)
 				File%Count%Parent := StrReplace(File%Count%ParentDir, ParentDir . "\")
+			}
 		}
 	}
 
