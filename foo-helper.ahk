@@ -86,7 +86,7 @@ Trigger_b:
     Gosub, GenreGui
     return
 
-; --- Gui Subroutines -------------
+; --- Gui Subroutines ---
 
 GenreGui:
     Gui -MaximizeBox -MinimizeBox
@@ -124,37 +124,36 @@ GuiClose:
     Gui, Destroy
     Exit
 
-; --- Subroutines -----------------
+; --- Speed Subroutines ---
+
+Skip10:
+    Send, {CtrlDown}{Right}{CtrlUp}
+    return
+
+Skip30:
+    Send, {CtrlDown}{ShiftDown}{Right}{CtrlUp}{ShiftUp}
+    return
 
 Speed0:
-    CheckBlacklist()
-    if (Toggle0)
-        AND isPlaying() AND !(endSec() < 55)
-        AND !kbActive() AND !scrollActive()
+    if Check(55)
     {
-        Send, {CtrlDown}{ShiftDown}{Right}{CtrlUp}{ShiftUp}
+        Gosub, Skip30
         Sleep, 10000
     }
     return
 
 Speed1:
-    CheckBlacklist()
-    if (Toggle1)
-        AND isPlaying() AND !(endSec() < 85)
-        AND !kbActive() AND !scrollActive()
+    if Check(85)
     {
-        Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
+        Gosub, Skip30
         Sleep, 6000
     }
     return
 
 Speed2:
-    CheckBlacklist()
-    if (Toggle2)
-        AND isPlaying() AND !(endSec() < 85)
-        AND !kbActive() AND !scrollActive()
+    if Check(85)
     {
-        Send, {CtrlDown}{ShiftDown}{Up}{CtrlUp}{ShiftUp}
+        Gosub, Skip30
         Sleep, 3000
     }
     return
@@ -168,7 +167,7 @@ DisableSpeed:
     msgbox, , , % "Speed : Off", 1
     return
 
-; --- Functions -------------------
+; --- Functions ---
 
 WinGetAll(InType:="", In:="", OutType:="") {
     WinGet, wParam, List
@@ -180,11 +179,11 @@ WinGetAll(InType:="", In:="", OutType:="") {
         Window[ Counta , "Name" ]	:= WinName%A_index%
         Window[ Counta , "Proc" ]	:= Proc%A_Index%
         if (WinName%A_index% = "") OR (WinName%A_Index% = "Start")
-            OR (WinName%A_Index% = "Program Manager")
+                OR (WinName%A_Index% = "Program Manager")
             continue
         if (InType) AND (In) AND (OutType)
             if (Window[A_index, InType] = In)
-            return % Window[a_index, OutType]
+                return % Window[a_index, OutType]
     }
     if (InType) AND (In) AND (OutType)
         return "Error, InType, or in not found."
@@ -239,6 +238,16 @@ GetGenreFolder(genre) {
         return 0
     }
     return temp_dir_1 . genre
+}
+
+Check(end_sec) {
+    if !(endSec() < end_sec)
+            AND !kbActive()
+            AND !scrollActive()
+            AND isPlaying()
+        return 1
+    else
+        return 0
 }
 
 CheckBlacklist() {
