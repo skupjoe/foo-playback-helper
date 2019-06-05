@@ -79,11 +79,13 @@ main() {
 			File%Count%Name := A_LoopFileName
 			File%Count%Dir := A_LoopFileLongPath
 			File%Count% := A_LoopFileFullPath
-			if not ParentDir
-			{
-				File%Count%ParentDir := GetParentDir(A_LoopFileLongPath)
-				File%Count%Parent := StrReplace(File%Count%ParentDir, ParentDir . "\")
-			}
+			File%Count%ParentDir := GetParentDir(A_LoopFileLongPath)
+			if global ParentDir
+				; Strip off ParentDir to get the ParentBase path (multiple levels) or folder name, if supplied
+				File%Count%ParentBase := StrReplace(File%Count%ParentDir, ParentDir . "\")
+			else
+				; Assume ParentBase path is parent folder name only
+				File%Count%ParentBase := SubStr(File%Count%ParentDir, InStr(File%Count%ParentDir,"\", 0, 0) + 1)
 		}
 	}
 
@@ -95,7 +97,7 @@ main() {
 		{
 			CircleProgress.Update(0, "Checking destinations.." A_Index)
 			n := File%A_Index%Name
-			d := File%A_Index%Parent
+			d := File%A_Index%ParentBase
 			IfNOTExist, %OutDir%\%d%\%n% 
 				File%A_Index%Des = %OutDir%\%d%\%n%
 			else
@@ -115,7 +117,7 @@ main() {
 		; Create missing directories
 		loop %Count%
 		{
-			d := File%A_Index%Parent
+			d := File%A_Index%ParentBase
 			out := OutDir . "\" . d
 			old := OldDir . "\" . d
 			if !(InStr(FileExist(out), "D"))
