@@ -2,19 +2,37 @@
 
 ## [Unreleased] - TBD
 ### Add
+- Detect when Foobar2000 is off/stopped and exit.
 - Move Album:
   - Warning: Attempt to move while Foobar2000 is playing.
   - Sanity check: Compare # of items in playlist vs music files in folder.
-  - Detect when Foobar2000 is off (not just Paused/Stopped) and Exit.
 
 ### Change
-- Dynamically create speed setting subroutines.
+- GetSongInfo() in a timer instead of function calls.
+- Dynamically create speed setting subroutines. (Possible?)
 - Improve scrolling hotkey logic to be more efficient, or limit scrolling updates.
 
 ### Fix
 - Make DisableSpeed subroutine fix error loop when name cannot obtained during speed loop.
 - Move Album:
   - Move album two levels deep does not remove empty parent folder.
+  - Sometimes FileRemoveDir does not work on empty/leftover directory.
+
+## [2.3.0] - 2019-06-07
+### Added
+- Added directory check. Single music files not supported yet.
+
+### Changed
+- Changed function order.
+
+### Fixed
+- Fixed dynamic speed trigger logic.
+- Fixed move files ParentDir truth test & ParentDir/ParentBase logic.
+- Fixed Check() order.
+
+## [2.2.6] - 2019-05-30
+### Changed
+- Functionized speed checks and settings.
 
 ## [2.2.5] - 2019-05-30
 ### Changed
@@ -98,7 +116,9 @@
 ### Added
 - First version commit.
 
-[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.5...HEAD
+[Unreleased]: https://github.com/skupjoe/foo-playback-helper/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.6...v2.3.0
+[2.2.6]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.5...v2.2.6
 [2.2.5]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.1...v2.2.5
 [2.2.1]: https://github.com/skupjoe/foo-playback-helper/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/skupjoe/foo-playback-helper/compare/v2.1.0...v2.2.0

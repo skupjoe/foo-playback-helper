@@ -209,26 +209,32 @@ GetSongInfo(ByRef name, ByRef time:="", ByRef p_dir_nosp:="") {
     return
 }
 
-EndSec() {
-    ctr := 0
+ParseSec(ByRef time_curr_sec, ByRef time_end_sec) {
     GetSongInfo(name, time)
     time_a := StrSplit(time, "`/")
     time_curr_a := StrSplit(time_a[1], "`:")
     time_end_a := StrSplit(time_a[2], "`:")
     time_curr_sec := (60*time_curr_a[1]+time_curr_a[2])
     time_end_sec := (60*time_end_a[1]+time_end_a[2])
-    while (time_end_sec == "" OR time_curr_sec == "") {
+    return
+}
+
+EndSec() {
+    ctr := 0
+    ParseSec(curr_sec, end_sec)
+    while !(RegExMatch(curr_sec, "^\d+?$")) {
         ctr++
-        GetSongInfo(name, time)
-        msgbox, , , % "Cannot get time!", 1
+        ParseSec(curr_sec, end_sec)
         Sleep, 5500
+        if (ctr > 2 and ctr < 5)
+            msgbox, , , % "Cannot get time!", 1
         if (ctr == 5) {
             msgbox, , , % "Time has remained empty. Exiting!", 2
             Gosub DisableSpeed
             return 0
         }
     }
-    return (time_end_sec - time_curr_sec)
+    return (end_sec - curr_sec)
 }
 
 Check(end_sec) {
@@ -248,7 +254,7 @@ IsPlaying() {
         ctr++
         GetSongInfo(name)
         Sleep, 5500
-        if (ctr not in 1,2)
+        if (ctr > 2 and ctr < 5)
             msgbox, , , % "Foobar2000 is not playing!", 1
         if (ctr == 5) {
             msgbox, , , % "Foobar2000 is still not playing. Exiting!", 2
