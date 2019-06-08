@@ -237,16 +237,6 @@ EndSec() {
     return (end_sec - curr_sec)
 }
 
-Check(end_sec) {
-    if IsPlaying()
-            AND !KbActive()
-            AND !ScrollActive()
-            AND !(EndSec() < end_sec)
-        return 1
-    else
-        return 0
-}
-
 IsPlaying() {
     ctr := 0
     GetSongInfo(name)
@@ -278,6 +268,16 @@ KbActive() {
     if (A_TimeIdleKeyboard < 2000)
         return 1
     return 0
+}
+
+Check(end_sec) {
+    if IsPlaying()
+            AND !KbActive()
+            AND !ScrollActive()
+            AND !(EndSec() < end_sec)
+        return 1
+    else
+        return 0
 }
 
 CheckBlacklist() {
