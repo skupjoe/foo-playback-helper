@@ -72,7 +72,7 @@ Trigger_b:
 ~^!m::
     GetSongInfo(name,, p_dir)
     if (name == "foobar2000") {
-        Send {CtrlDown} {Home} {CtrlUp}
+        Send {CtrlDown}{Home}{CtrlUp}
         Sleep, 3500
         GetSongInfo(name)
         if (name == "foobar2000") {
@@ -80,12 +80,16 @@ Trigger_b:
             Exit
         }
     }
+    if (p_dir == temp_dir_0 ) or InStr(p_dir, temp_dir_0 . "\_") {
+        MsgBox, , , % "Directory is not a valid album folder. Aborting. : " p_dir, 2
+        Exit
+    }
     LoopGenres(genres)
     Gosub, DisableSpeed
     Sleep, 1000
-    Send {CtrlDown} {End} {CtrlUp}
+    Send {CtrlDown}{End}{CtrlUp}
     Sleep, 1000
-    Send {CtrlDown} {AltDown} {o} {AltUp} {CtrlUp}
+    Send {CtrlDown}{AltDown}o{AltUp}{CtrlUp}
     Sleep, 2000
     Gosub, GenreGui
     return
@@ -119,9 +123,9 @@ GoSeq:
     dest := GetGenreFolder(Chosen)
     RunWait, %A_AhkPath% "%A_ScriptDir%\script\move_files.ahk" "%p_dir%" "%dest%" "%old_dir%" "%temp_dir_0%"
     Sleep, 5000
-    Send {CtrlDown} {ShiftDown} {Space} {ShiftUp} {CtrlUp}
+    Send {CtrlDown}{ShiftDown}{Space}{ShiftUp}{CtrlUp}
     Sleep, 2500
-    Send {CtrlDown} {Home} {CtrlUp}
+    Send {CtrlDown}{Home}{CtrlUp}
     return
 
 GuiClose:
