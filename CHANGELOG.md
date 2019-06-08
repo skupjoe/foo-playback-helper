@@ -23,6 +23,7 @@
 - Added directory check. Single music files not supported yet.
 
 ### Changed
+- Improved time detection
 - Changed function order.
 
 ### Fixed
