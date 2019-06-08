@@ -231,52 +231,14 @@ EndSec() {
     return (time_end_sec - time_curr_sec)
 }
 
-LoopGenres(ByRef genres) {
-    genres := {}
-    Loop, Files, % temp_dir_1 . "*", D
-    if A_LoopFileAttrib contains D
-        if SubStr(A_LoopFileName, 1, 1) = "_"
-        genres .= SubStr(A_LoopFileName, 2) . "|"
-    return
-}
-
-GetGenreFolder(genre) {
-    if (genre == "") {
-        msgbox, , , % "No genre specified!", 2
-        return 0
-    }
-    return temp_dir_1 . genre
-}
-
 Check(end_sec) {
-    if !(EndSec() < end_sec)
+    if IsPlaying()
             AND !KbActive()
             AND !ScrollActive()
-            AND IsPlaying()
+            AND !(EndSec() < end_sec)
         return 1
     else
         return 0
-}
-
-CheckBlacklist() {
-    blacklist := ["vmware", "notepad++"]
-    WinGetActiveTitle, title_win
-    if B_Toggle {
-        for i, v in blacklist {
-            if (title_win == "vmware") {
-                sleep, 2000
-                WinGetActiveTitle, title_win ; Refresh
-                return
-            }
-            while inStr(title_win, v, 0) {
-                Pause, On, 1
-                Sleep, 2000
-                Pause, Off, 1
-                WinGetActiveTitle, title_win ; Refresh
-            }
-        }
-    }
-    return
 }
 
 IsPlaying() {
@@ -312,5 +274,42 @@ KbActive() {
     return 0
 }
 
+CheckBlacklist() {
+    blacklist := ["vmware", "notepad++"]
+    WinGetActiveTitle, title_win
+    if B_Toggle {
+        for i, v in blacklist {
+            if (title_win == "vmware") {
+                sleep, 2000
+                WinGetActiveTitle, title_win ; Refresh
+                return
+            }
+            while inStr(title_win, v, 0) {
+                Pause, On, 1
+                Sleep, 2000
+                Pause, Off, 1
+                WinGetActiveTitle, title_win ; Refresh
+            }
+        }
+    }
+    return
+}
+
+LoopGenres(ByRef genres) {
+    genres := {}
+    Loop, Files, % temp_dir_1 . "*", D
+    if A_LoopFileAttrib contains D
+        if SubStr(A_LoopFileName, 1, 1) = "_"
+        genres .= SubStr(A_LoopFileName, 2) . "|"
+    return
+}
+
+GetGenreFolder(genre) {
+    if (genre == "") {
+        msgbox, , , % "No genre specified!", 2
+        return 0
+    }
+    return temp_dir_1 . genre
+}
 
 F9::Reload
