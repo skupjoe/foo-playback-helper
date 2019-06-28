@@ -13,6 +13,8 @@
 - Improve scrolling hotkey logic to be more efficient, or limit scrolling updates.
 
 ### Fix
+- Bug: FileMoveError is encountered when move album from stopped playback.
+- Bug: Music shouldn't start again if FileMoveError is encountered.
 - Make DisableSpeed subroutine fix error loop when name cannot obtained during speed loop.
 - Move Album:
   - Move album two levels deep does not remove empty parent folder.
